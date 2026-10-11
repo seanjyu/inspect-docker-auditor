@@ -1,0 +1,11 @@
+.venv
+.vscode
+logs/
+scratch/
+audit_logs/
+src/inspect_docker_auditor/__pycache__/
+src/inspect_docker_auditor.egg-info/
+__pycache__
+config.yaml
+certs/
+/certs/
