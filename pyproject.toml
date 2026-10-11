@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inspect-docker-auditor"
+version = "0.1.0"
+description = "Audited Docker Sandbox Environment for Inspect AI"
+dependencies = [
+    "inspect_ai",
+    "mitmproxy>=10.0.0",
+    "pydantic>=2.0.0",
+    "docker",
+    "pyyaml"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+    "types-pyyaml",
+]
+
+[project.entry-points."inspect_ai"]
+inspect_docker_auditor = "inspect_docker_auditor._registry"
+
+[tool.setuptools.package-data]
+inspect_docker_auditor = ["Dockerfile.agent", "Dockerfile.proxy", "policy_engine.py", "certs/*"  ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "unit: Fast, offline unit tests without external dependencies",
+    "docker: Integration tests requiring Docker daemon access and container execution",
+]
+# Environment variables default settings (e.g., custom timeouts if needed)
+env = [
+    "AUDITOR_TEST_TIMEOUT=60",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort (import sorting)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+ignore_missing_imports = true
