@@ -52,7 +52,8 @@ pip install -e ".[dev]"
 ```
 
 ## Quickstart
-The following example is a quick example of how to use the docker auditor. A more in depth example can be found here
+The following example is a quick example of how to use the docker auditor. 
+<!-- A more in depth example can be found here -->
 1. Setup a config.yaml file with specific rules (note, most of the config variables have default values, a full example can be found [here]())
 ```yaml
 network_rules:
