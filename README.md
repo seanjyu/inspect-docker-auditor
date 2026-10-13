@@ -35,7 +35,7 @@ This system is designed for observability and policy enforcement on evaluation a
 ## Install
 1. Clone this repo 
 ``` bash
-git clone 
+git clone https://github.com/seanjyu/inspect-docker-auditor
 ```
 OPTIONAL - Create and activate python virtual environment
 ```bash
