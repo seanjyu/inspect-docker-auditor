@@ -8,7 +8,7 @@ from inspect_ai.solver import Generate, TaskState, solver
 from inspect_ai.util import sandbox
 
 from inspect_docker_auditor.config import AuditorConfig
-from inspect_docker_auditor.solver_utils import safe_solver
+from inspect_docker_auditor.solver_utils import auditor_solver
 
 # from inspect_docker_auditor.auditor import PolicyEngine
 
@@ -70,7 +70,7 @@ def audited_discovery_task(config_path: str | Path = "config.yaml") -> Task:
                 ),
             ]
         ),
-        plan=[safe_solver(proxy_discovery_solver())],
+        plan=[auditor_solver(proxy_discovery_solver())],
         sandbox=("docker_audited", config_path),
         metadata={"config_path": config_path},
         scorer=includes(),
