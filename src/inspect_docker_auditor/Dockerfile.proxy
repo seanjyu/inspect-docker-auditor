@@ -1,17 +1,3 @@
-# FROM mitmproxy/mitmproxy:latest
-
-# WORKDIR /app
-
-# RUN pip install --upgrade pip wheel setuptools
-
-# COPY pyproject.toml /app/
-
-# COPY src/ /app/src/
-
-# RUN pip install --verbose . 
-
-# ENV PYTHONPATH="/app/src"
-
 FROM mitmproxy/mitmproxy:latest
 
 # Install uv for ultra-fast dependency resolution (10x faster than pip)
@@ -19,21 +5,21 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# 1. Copy ONLY pyproject.toml first to cache dependency installation
+# Copy ONLY pyproject.toml first to cache dependency installation
 COPY pyproject.toml /app/
 
-# 2. Create stub src/ directory so pip/uv can parse project metadata without source
+# Create stub src/ directory so pip/uv can parse project metadata without source
 RUN mkdir -p /app/src/inspect_docker_auditor && \
     touch /app/src/inspect_docker_auditor/__init__.py
 
-# 3. Install dependencies (Cached unless pyproject.toml changes!)
+# Install dependencies (Cached unless pyproject.toml changes!)
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system -e .
 
-# 4. Copy actual source code LAST
+# Copy actual source code LAST
 COPY src/ /app/src/
 
-# 5. Fast non-interactive re-install of local package code only
+# Fast non-interactive re-install of local package code only
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system --no-deps -e .
 
