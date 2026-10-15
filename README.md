@@ -19,15 +19,13 @@ An audited Docker sandbox environment for Inspect AI that uses a mitmproxy to lo
 
 - The proxy sidecar has no direct Docker daemon access; instead, violation signals are dispatched over a restricted host-mounted Unix domain socket to the Inspect AI host runner, which safely handles container termination.
 
+## Documentation 
+Detailed breakdown of trust boundaries and limitations can be found [here](docs/threat_and_limitations.md).
 
-## Threat Model and Limitations
-This system is designed for observability and policy enforcement on evaluation agents rather than functioning as a hardened security boundary. Before using inspect-docker-auditor, please note the following weaknesses/threat vectors:
-- Shell regex filter is a coarse heuristic (ba""sh, base64 evade it)
-- The "Kill on violation" command will only occur after the violation is triggered meaning that there is a small window between when a violation command is sent from the MITM proxy and the actual docker shutdown is activated.
-- This framework does not track Non-HTTP traffic, specifically:
-    - Raw TCP/UDP packets and non-HTTP protocols are hard-dropped at the kernel layer by network isolation rather than forwarded to the proxy. Consequently, unauthorized non-HTTP egress is blocked safely but leaves no application-level audit trail in the logs.
-    - Because Docker's embedded DNS resolver operates independently of the proxy, agents can still resolve external domain names to IP addresses locally. While connection attempts to those IPs are subsequently dropped, the DNS lookups themselves represent an unmonitored telemetry gap.
-    - Because the agent container and the `mitmdump` sidecar share the same isolated internal subnet, the agent container can theoretically reach the proxy's listening port directly via container IP. While the sidecar runs headless with no management UI or administrative control plane, this shares a local network surface area rather than a strictly unidirectional data path.
+Further details regarding the architecture, decisions and tradeoffs can be found [here](docs/architecture.md).
+
+Details on config variables can be found [here](docs/config.md).
+
 
 ## System Requirements
 - Python 3.12 or higher
@@ -54,7 +52,7 @@ pip install -e ".[dev]"
 ## Quickstart
 The following example is a quick example of how to use the docker auditor. 
 <!-- A more in depth example can be found here -->
-1. Setup a config.yaml file with specific rules (note, most of the config variables have default values, a full example can be found [here]())
+1. Setup a config.yaml file with specific rules. (The documentation for the config can be found here [here](docs/config.md)) 
 ```yaml
 network_rules:
   - name: "block_example_domain"
