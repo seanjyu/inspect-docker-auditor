@@ -4,7 +4,7 @@ from inspect_ai.solver import Generate, Solver, TaskState, solver
 from .exceptions import AuditorPermissionError
 
 
-def safe_solver(
+def auditor_solver(
     target_solver: Solver,
     *,
     mark_completed: bool = True,
@@ -25,14 +25,6 @@ def safe_solver(
             except AuditorPermissionError as err:
                 # Capture violation context without crashing the runner
                 state.store.set("security_violation", str(err))
-                # state.messages.append(
-                #     {
-                #         "role": "system",
-                #         "content": (
-                #             f"[Execution Stopped]: Sandbox policy violation- {err}",
-                #         ),
-                #     }
-                # )
                 state.messages.append(
                     ChatMessageSystem(
                         content=(
