@@ -417,10 +417,8 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
         infra_log_dir = cls.base_log_dir / "infra_logs"
         infra_log_dir.mkdir(parents=True, exist_ok=True)
 
-        # -------------------------------------------------------------------------
-        # 1. Prepare Socket Directory on Host
-        # -------------------------------------------------------------------------
-        # TODO In the future get this
+        # Prepare Socket Directory on Host
+        # TODO In the future get this from config?
         socket_dir = Path("/tmp/inspect_audit")
         socket_dir.mkdir(parents=True, exist_ok=True)
         host_socket_path = socket_dir / "proxy.sock"
@@ -435,9 +433,7 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
                     f"('{cls.auditor_config.proxy_name}' and socket proxy)..."
                 )
 
-                # -----------------------------------------------------------------
-                # 2. Start Unix Socket Server on Host
-                # -----------------------------------------------------------------
+                # Start Unix Socket Server on Host
                 if host_socket_path.exists():
                     host_socket_path.unlink()
 
@@ -504,7 +500,7 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
                     "-e",
                     "EVENTS=1",
                     "-e",
-                    "POST=1",
+                    "POST=0",
                     "-e",
                     "DELETE=0",
                     "-e",
@@ -672,8 +668,6 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
         if cls.auditor_config.setup_verbose:
             print(f"[SAMPLE INIT] Sample ID: {resolved_id}")
 
-        # TODO add uuid as a kind of fallback since the user may mistakenly give samples
-        # with the same id?
         # Construct the unique network name for this sample
         internal_net_name = f"agent_net_{resolved_id}"
 
@@ -725,8 +719,6 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
             },
         )
 
-        #  Pass ComposeConfig to Inspect AI's engine
-        # (returns dict[str, SandboxEnvironment])
         environments = await super().sample_init(
             task_name=task_name,
             config=compose_config,
@@ -736,13 +728,6 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
         # Attach instance attributes to every created SandboxEnvironment instance
         for env in environments.values():
             env.__class__ = cls
-
-            # env.resolved_id = resolved_id
-            # env.sample_id = resolved_id
-            # env.auditor_config = cls.auditor_config
-            # env.terminator = ContainerTerminator()
-            # env._network_violation = ""
-            # env._active_exec_tasks = set()
 
             audited_env = cast(AuditedDockerSandboxEnvironment, env)
 
@@ -790,10 +775,6 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
                         f"Container {container_id} is not connected to network "
                         f"{internal_net_name}: {stderr_str.strip()}"
                     )
-
-                # TODO delete?
-                # env.container_ip = container_ip
-                # if container_ip.decode("utf-8") in cls._registry.keys():
 
                 cls._registry[container_ip.decode("utf-8")] = sample_env
 
@@ -1062,17 +1043,17 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
                 print(f"[Task Cleanup] Failed to save proxy stdout: {e}")
 
         try:
-            # 1. Remove Socket Proxy container
+            # Remove Socket Proxy container
             await _run_async(
                 "docker", "rm", "-f", cls.auditor_config.socket_proxy_name, check=False
             )
 
-            # 2. Remove MITM Proxy container
+            # Remove MITM Proxy container
             await _run_async(
                 "docker", "rm", "-f", cls.auditor_config.proxy_name, check=False
             )
 
-            # 3. Remove shared bridge network
+            # Remove shared bridge network
             await _run_async(
                 "docker",
                 "network",
