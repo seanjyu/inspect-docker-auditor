@@ -35,11 +35,7 @@ class ProxyAuditor:
                 validated_rules.append(NetworkRuleConfig.model_validate(raw_rule))
 
             except Exception as err:
-                rule_name = (
-                    raw_rule.get("name", "unnamed")
-                    if isinstance(raw_rule, dict)
-                    else "unnamed"
-                )
+                rule_name = raw_rule.name if isinstance(raw_rule, dict) else "unnamed"
                 print(
                     f"[mitmproxy] ERROR: Invalid rule schema for '{rule_name}': {err}"
                 )
@@ -169,8 +165,19 @@ class ProxyAuditor:
 
         # TODO make a cleaner rule checking method
         # Match domain if no domains listed OR host matches one of the specified domains
+        # domain_match = not rule.domains or any(
+        #             host == d or host.endswith(f".{d}") for d in rule.domains
+        #         )
+        def _match_domain(h: str, pattern: str) -> bool:
+            pattern = pattern.lower()
+            if pattern.startswith("*."):
+                base_domain = pattern[2:]
+                # Matches either the apex domain or any subdomain
+                return h == base_domain or h.endswith(f".{base_domain}")
+            return h == pattern or h.endswith(f".{pattern}")
+
         domain_match = not rule.domains or any(
-            host == d or host.endswith(f".{d}") for d in rule.domains
+            _match_domain(host, d) for d in rule.domains
         )
 
         # Match path if no paths listed OR path starts with one of the specified paths
@@ -243,10 +250,6 @@ class ProxyAuditor:
             if not self.evaluate_rule(rule, flow):
                 continue
 
-            # Convert Pydantic NetworkRuleConfig to dict if necessary
-            # rule_dict = (
-            #     rule.model_dump(mode="json") if hasattr(rule, "model_dump") else rule
-            # )
             rule_dict = rule if isinstance(rule, dict) else rule.model_dump(mode="json")
 
             rule_name = rule_dict.get("name", "Unnamed Rule")
