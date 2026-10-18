@@ -14,37 +14,6 @@ rules: []
 # Set environment variable BEFORE any tests or modules are imported
 os.environ["CONFIG_PATH"] = str(_default_config)
 
-# @pytest.fixture
-# def sample_config_yaml(tmp_path: Path) -> Path:
-#     """Creates a temporary valid YAML config file matching AuditorConfig schema."""
-#     config_file = tmp_path / "test_config.yaml"
-#     config_file.write_text("""
-# proxy_name: "test_mitmproxy"
-# proxy_port: 8080
-# save_docker_logs: true
-# terminate_on_violation: false
-# network_name: "inspect_audit_net"
-
-# network_rules:
-#   - name: "block_blacklist"
-#     domains:
-#       - "example.com"
-#       - "*.badsite.org"
-#     action: "BLOCK"
-#     status_code: 403
-
-# bypass:
-#   - "http://api.openai.com"
-#   - "api.anthropic.com"
-#   - "host.docker.internal:8000"
-
-# command_rules:
-#   - name: "block_cat_passwd"
-#     pattern: "cat\\\\s+/etc/passwd"
-#     action: "BLOCK"
-# """)
-#     return config_file
-
 
 @pytest.fixture
 def sample_config_yaml(tmp_path: Path) -> Path:
