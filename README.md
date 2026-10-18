@@ -30,6 +30,7 @@ Details on config variables can be found [here](docs/config.md).
 ## System Requirements
 - Python 3.12 or higher
 - Docker Engine/Docker Desktop
+
 ## Install
 1. Clone this repo
 ``` bash
