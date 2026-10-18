@@ -74,7 +74,7 @@ save_mitmproxy_logs: False
 network_rules:
   - name: "block_blacklist"
     domains:
-      - "example.com"
+      - "https://www.some_evil_website.com"
       - "*.badsite.org"
     action: "BLOCK"
     status_code: 403

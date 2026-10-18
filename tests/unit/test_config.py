@@ -19,7 +19,10 @@ def test_load_auditor_config_from_yaml(sample_config_yaml: Path) -> None:
     # Network rules
     assert len(config.network_rules) == 1
     assert config.network_rules[0].name == "block_blacklist"
-    assert config.network_rules[0].domains == ["example.com", "*.badsite.org"]
+    assert config.network_rules[0].domains == [
+        "https://www.some_evil_website.com",
+        "*.badsite.org",
+    ]
     assert config.network_rules[0].action == "BLOCK"
 
     # Command rules

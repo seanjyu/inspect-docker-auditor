@@ -93,7 +93,7 @@ def test_audited_network_egress_sample(
     # Create a 1-sample task for this specific test iteration
     task = Task(
         dataset=MemoryDataset([sample]),
-        plan=[network_request_solver()],
+        solver=network_request_solver(),
         sandbox=("docker_audited", str(sample_config_yaml.resolve())),
         scorer=includes(),
     )

@@ -40,11 +40,11 @@ network_rules:
 
 class TestAuditorInit:
     @pytest.mark.unit
-    def test_init_loads_valid_configuration(self, sample_config_yaml, monkeypatch):
+    def test_init_loads_valid_configuration(self, sample_valid_yaml, monkeypatch):
         """
         Verify Auditor correctly loads config from CONFIG_PATH and parses valid rules.
         """
-        monkeypatch.setenv("CONFIG_PATH", sample_config_yaml)
+        monkeypatch.setenv("CONFIG_PATH", sample_valid_yaml)
 
         auditor = ProxyAuditor()
 
@@ -193,8 +193,8 @@ class TestCheckEgressViolation:
         assert isinstance(violation, dict)
         assert violation["rule_name"] == "System_Internal_Egress_Block"
         assert violation["status_code"] == 403
-        assert "internal-service.local" in violation["message"]
-        assert "10.0.0.15" in violation["message"]
+        assert "internal-service.local" in violation["message"][0]
+        assert "10.0.0.15" in violation["message"][0]
 
     def test_external_host_returns_none(
         self, auditor_instance, mock_flow, monkeypatch: pytest.MonkeyPatch

@@ -1,6 +1,6 @@
 ## Testing
 
-Tests for this project were done through pytest. There are two main test categories, with docker and without docker. Note the non docker tests contains unit tests and integration tests whereas the the docker tests contains all three. 
+Tests for this project were done through pytest. There are two main test categories, with docker and without docker. Note the non docker tests contains unit tests and integration tests whereas the the docker tests contains all three.
 <!-- A full summary/breakdown of the individual tests can be found in the [test readme](). -->
 
 The following code snippets show how to run the tests.
