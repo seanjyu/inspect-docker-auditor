@@ -25,8 +25,8 @@ jobs:
       - name: Build Docker Images for Testing
         run: |
           # Build your proxy / sandbox images so they exist locally in CI
-          docker build -t inspect-auditor-proxy:latest -f docker/Dockerfile.proxy .
-          # (Add any other container builds your tests require)
+          docker build -t inspect-auditor-proxy:latest -f src/inspect_docker_auditor/Dockerfile.agent .
+          docker build -t inspect-auditor-proxy:latest -f src/inspect_docker_auditor/Dockerfile.proxy .
 
       - name: Run Pytest with Container Log Dumping on Failure
         run: pytest -v
