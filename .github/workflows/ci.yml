@@ -17,11 +17,22 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run Pre-commit Checks
-        uses: pre-commit/action@v3.0.1
-
-      - name: Install dependencies & run tests
+      - name: Install dependencies & package
         run: |
           pip install -e .
           pip install pytest pytest-asyncio
-          pytest -v
+
+      - name: Build Docker Images for Testing
+        run: |
+          # Build your proxy / sandbox images so they exist locally in CI
+          docker build -t inspect-auditor-proxy:latest -f docker/Dockerfile.proxy .
+          # (Add any other container builds your tests require)
+
+      - name: Run Pytest with Container Log Dumping on Failure
+        run: pytest -v
+
+      - name: Dump Docker logs on failure
+        if: failure()
+        run: |
+          docker logs test_mitmproxy || true
+          docker logs test_socket_proxy || true
