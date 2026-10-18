@@ -1,4 +1,4 @@
-# Config 
+# Config
 
 The main configuration object accepts the following fields:
 

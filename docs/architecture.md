@@ -1,11 +1,11 @@
-# Architecture 
+# Architecture
 
 This document outlines the overarching architecture of this framework as well as various high level decisions and tradeoffs.
 
 
 # Detailed Lifecycle
 ### Inspect Task and Sample Definition
-1) The config is loaded in the inspect task definition using AuditorConfig.from_yaml method. 
+1) The config is loaded in the inspect task definition using AuditorConfig.from_yaml method.
 2) Sample IDs can be defined in the dataset metadata to name individual Docker containers. If none is provided, a UUID is automatically generated.
 
 ### Audited Docker Sandbox Environment
@@ -30,7 +30,7 @@ This document outlines the overarching architecture of this framework as well as
         - Resolves request hostnames via DNS and blocks unauthorized access to private IP ranges, loopback addresses, or cloud metadata endpoints (e.g., 169.254.169.254).
     - Granular Policy Rule Matching
         - Evaluates intercepted flows against user-defined rules filtering by target domain wildcards, URL path prefixes, and HTTP methods (e.g., allowing GET while blocking POST/PUT).
-    - Violation Handling & IPC Signal Dispatch 
+    - Violation Handling & IPC Signal Dispatch
         - Intercepts prohibited requests to return local 403 Forbidden responses and transmits out-of-band JSON alerts over the Unix domain socket to the host runner.
     - Atomic JSONL Event Logging
         - Records request telemetry and violation metadata using low-level POSIX atomic file appends
@@ -49,14 +49,14 @@ This document outlines the overarching architecture of this framework as well as
     - Audit Aggregation
         - Parses L7 network logs and compiles a structured master audit manifest
     - Network purge
-        - Disconnects and destroys the sample's isolated Docker network. 
+        - Disconnects and destroys the sample's isolated Docker network.
 8) Once all evaluation samples are finalized, a global teardown routine purges the remaining infrastructure.
     - Sidecar & Proxy Teardown
-        - Force-terminates the headless mitmdump proxy and the read-only Docker socket proxy containers.   
+        - Force-terminates the headless mitmdump proxy and the read-only Docker socket proxy containers.
     - IPC & Socket Closure
         - Closes the host Unix domain socket server, unlinks the socket path, and stops background log-streaming tasks.
     - Global Network Purge
-        - Removes the shared bridge network and cleans up residual system resources.  
+        - Removes the shared bridge network and cleans up residual system resources.
 
 The following diagram summarizes this process
 
@@ -88,7 +88,8 @@ graph TD
     ExecAudit -->|Blocks / Raises Exception on violation| Agent
 ```
 
-# Decisions and Tradeoffs
+# Various Decisions and Tradeoffs
+<!-- The following are some  -->
 
 - L7 Application Proxy vs. Network-Layer Filtering (`iptables`)
     - Decision: Chose an explicit L7 proxy (`mitmproxy`) over simple network-layer dropping to enable deep inspection of domain paths, request bodies, and HTTP methods (`GET` vs. `POST`).
@@ -107,6 +108,6 @@ graph TD
     - Decision: Deploys an intermediary read-only Docker socket proxy (tecnativa/docker-socket-proxy) with hardcoded capability limits (DELETE=0, EXEC=0, POST=0) rather than mounting the raw host Docker socket directly.
     - Trade-off: Adds an extra container hop and configuration overhead, but strictly bounds potential blast radius by exposing only introspection endpoints (CONTAINERS, LOGS, INFO, EVENTS) while blocking arbitrary container execution or deletion from the auxiliary tooling.
 
-# Utils 
+# Utils
 
 - A solver wrapper was also written to allow for graceful exception handling, preventing evaluation tasks from crashing when a sandbox policy is triggered by recording the violation in the task state and safely completing the trajectory.

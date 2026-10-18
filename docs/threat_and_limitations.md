@@ -46,4 +46,3 @@ Environment Visibility & Eval-Awareness
 Kernel & Container Escapes
 
 - Vulnerabilities exploiting the underlying Linux kernel or container runtime isolation boundaries fall outside the scope of user-space proxy enforcement.
-
