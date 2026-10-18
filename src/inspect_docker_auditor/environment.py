@@ -778,7 +778,8 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
 
                 cls._registry[container_ip.decode("utf-8")] = sample_env
 
-        return environments
+        # return environments
+        return cast(dict[str, SandboxEnvironment], environments)
 
     @classmethod
     async def _collect_container_telemetry(
@@ -1108,7 +1109,6 @@ class AuditedDockerSandboxEnvironment(DockerSandboxEnvironment):
         timeout_retry: bool = True,
         concurrency: bool = True,
     ) -> ExecResult[str]:
-
         # Guard 1
         self._raise_if_network_violation()
 
