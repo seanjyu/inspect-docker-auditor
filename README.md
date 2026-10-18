@@ -9,7 +9,7 @@ An audited Docker sandbox environment for Inspect AI that uses a mitmproxy to lo
 
 - Shell Command Interception: Intercept Inspect AI's exec() method to evaluate shell commands against regex-based rules prior to execution, blocking unauthorized system operations.
 
-- Flexible Policy Enforcement: Toggle between soft-blocking (returning 403 HTTP errors or execution permission errors) and hard termination (immediately killing the container via Docker) upon rule violations. 
+- Flexible Policy Enforcement: Toggle between soft-blocking (returning 403 HTTP errors or execution permission errors) and hard termination (immediately killing the container via Docker) upon rule violations.
 
 - Atomic Telemetry & Logging: POSIX atomic JSONL event logging, container stdout/stderr log streaming, bash shell history collection, and structured master audit manifests
 
@@ -19,7 +19,7 @@ An audited Docker sandbox environment for Inspect AI that uses a mitmproxy to lo
 
 - The proxy sidecar has no direct Docker daemon access; instead, violation signals are dispatched over a restricted host-mounted Unix domain socket to the Inspect AI host runner, which safely handles container termination.
 
-## Documentation 
+## Documentation
 Detailed breakdown of trust boundaries and limitations can be found [here](docs/threat_and_limitations.md).
 
 Further details regarding the architecture, decisions and tradeoffs can be found [here](docs/architecture.md).
@@ -31,7 +31,7 @@ Details on config variables can be found [here](docs/config.md).
 - Python 3.12 or higher
 - Docker Engine/Docker Desktop
 ## Install
-1. Clone this repo 
+1. Clone this repo
 ``` bash
 git clone https://github.com/seanjyu/inspect-docker-auditor
 ```
@@ -50,9 +50,9 @@ pip install -e ".[dev]"
 ```
 
 ## Quickstart
-The following example is a quick example of how to use the docker auditor. 
+The following example is a quick example of how to use the docker auditor.
 <!-- A more in depth example can be found here -->
-1. Setup a config.yaml file with specific rules. (The documentation for the config can be found here [here](docs/config.md)) 
+1. Setup a config.yaml file with specific rules. (The documentation for the config can be found here [here](docs/config.md))
 ```yaml
 network_rules:
   - name: "block_example_domain"
@@ -76,7 +76,6 @@ import inspect_docker_auditor  # Registers 'docker_audited' sandbox provider
 def your_inspect_AI_task(config_path: str | Path = "config.yaml") -> Task:
     return Task(
         dataset=your_dataset,
-        plan=your_plan,
         sandbox=(
             "docker_audited",
             str(config_path),
@@ -94,8 +93,3 @@ python your_task.py
 ```
 
 4. Inspect logs, HTTP traffic captures, and command execution traces will be written to the output directory specified in your config.yaml (defaults to ./auditor_logs/).
-
-<!-- ## Documentation and Testing
-- Further details regarding the architecture can be found [here](docs/architecture.md)
-- Testing for this framework was done through pytest, more details can be found [here](tests/testing.md)
-- A roadmap of future features and considerations can be found [here](docs/roadmap.md) -->
