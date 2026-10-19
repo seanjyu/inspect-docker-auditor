@@ -1,4 +1,5 @@
 # inspect-docker-auditor
+[![CI](https://github.com/seanjyu/inspect-docker-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/seanjyu/inspect-docker-auditor/actions/workflows/ci.yml)
 
 An audited Docker sandbox environment for Inspect AI that uses a mitmproxy to log and enforces security policies on network traffic and shell command execution inside inspect AI evaluation containers.
 
