@@ -48,6 +48,7 @@ def command_exec_solver():
     return solve
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("sample", ALLOWED_TEST_SAMPLES, ids=lambda s: s.id)
 def test_audited_solver_sample_pass_command(
     sample: Sample, sample_config_yaml: Path, tmp_path: Path
@@ -81,6 +82,7 @@ def test_audited_solver_sample_pass_command(
     )
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("sample", BLOCK_TEST_SAMPLES, ids=lambda s: s.id)
 def test_audited_solver_sample_block_command(
     sample: Sample, sample_terminate_on_violation_config_yaml: Path, tmp_path: Path

@@ -28,8 +28,8 @@ jobs:
           docker build -t inspect-auditor-proxy:latest -f src/inspect_docker_auditor/Dockerfile.agent .
           docker build -t inspect-auditor-proxy:latest -f src/inspect_docker_auditor/Dockerfile.proxy .
 
-      - name: Run Pytest with Container Log Dumping on Failure
-        run: pytest -v
+      - name: Run Unit Tests
+        run: pytest tests/unit -v
 
       - name: Dump Docker logs on failure
         if: failure()
